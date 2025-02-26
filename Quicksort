@@ -1,0 +1,66 @@
+import time  
+import random
+import matplotlib.pyplot as plt
+import sys
+
+sys.setrecursionlimit(10**6)
+
+def quick_sort(lst):
+    if len(lst) <= 1:
+        return lst
+    pivot = lst[len(lst) // 2]
+    smaller_part = [x for x in lst if x < pivot]
+    equal_part = [x for x in lst if x == pivot]
+    larger_part = [x for x in lst if x > pivot]
+    return quick_sort(smaller_part) + equal_part + quick_sort(larger_part)
+
+def quick_sort_random(lst):
+    if len(lst) <= 1:
+        return lst
+    pivot_index = random.randint(0, len(lst) - 1)
+    pivot = lst[pivot_index]
+    smaller_part = [x for x in lst if x < pivot]
+    equal_part = [x for x in lst if x == pivot]
+    larger_part = [x for x in lst if x > pivot]
+    return quick_sort_random(smaller_part) + equal_part + quick_sort_random(larger_part)
+
+def measure_execution_time(sort_func, lst):
+    start_time = time.perf_counter()
+    sort_func(lst)
+    end_time = time.perf_counter()
+    return end_time - start_time
+
+def generate_best_case(n):
+    return list(range(n))
+
+def generate_worst_case(n):
+    return list(range(n, 0, -1))
+
+def generate_average_case(n):
+    data = list(range(n))
+    random.shuffle(data)
+    return data
+
+input_sizes = [150, 600, 1200, 5500, 11000]
+best_case_results, worst_case_results, avg_case_results = [], [], []
+
+for size in input_sizes:
+    best_case_results.append(measure_execution_time(quick_sort, generate_best_case(size)))
+    worst_case_results.append(measure_execution_time(quick_sort, generate_worst_case(size)))
+    avg_case_results.append(measure_execution_time(quick_sort, generate_average_case(size)))
+
+plt.figure(figsize=(10, 5))
+plt.plot(input_sizes, best_case_results, label='Best Case', marker='o')
+plt.plot(input_sizes, worst_case_results, label='Worst Case', marker='o')
+plt.plot(input_sizes, avg_case_results, label='Average Case', marker='o')
+plt.xlabel('Input Size (n)')
+plt.ylabel('Execution Time (seconds)')
+plt.title('Performance Comparison of QuickSort')
+plt.legend()
+plt.grid()
+plt.show()
+
+if __name__ == "__main__":
+    sample_list = [6, 2, 8, 5, 1, 3]
+    print("Sorted using median pivot:", quick_sort(sample_list))
+    print("Sorted using random pivot:", quick_sort_random(sample_list))
